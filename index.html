@@ -362,18 +362,125 @@ function toggleTheme() {
 }
 
 
+
 // ==========================================
-// YOUR HARDWARE DATABASE
+// HARDWARE DATABASE 
 // ==========================================
 const laptopData = {
+    // --- COMPUTER SCIENCE & IT (Needs good CPU, RAM for coding/VMs, light GPU) ---
     cs: {
-        budget: { specs: "Your specs here", laptops: [ { name: "Example Laptop 1", price: "₹45,000", isRecommended: true, link: "#" } ] },
-        mid: { specs: "Your specs here", laptops: [ { name: "Example Laptop 2", price: "₹65,000", isRecommended: false, link: "#" } ] },
-        premium: { specs: "Your specs here", laptops: [ { name: "Example Laptop 3", price: "₹95,000", isRecommended: true, link: "#" } ] }
+        budget: { 
+            specs: "Intel Core i5 or i3 / Ryzen 5 or 7, 8GB-16GB RAM, 512GB SSD. (Prioritize RAM for compiling code).", 
+            laptops: [ 
+                { name: "Lenovo IdeaPad Slim 3", price: "₹48,900", isRecommended: false, link: "https://www.amazon.in/Lenovo-IdeaPad-39-6cm-Windows-82X700G5IN/dp/B0F8QFMXJ7/ref=sr_1_2_sspa?crid=57XL82RHPMGK&dib=eyJ2IjoiMSJ9.wO5OYHnjAXMeDIWtbEsGaofsYeKUdebas4ERhyqijrg-y1Sm_O0PF3Q88RRsCWLazl0G0Ox_HIlubAsH4gHvzq8mddkWMY82o38Y5FU04QzevAmRi4MfydgubEWVYxIcuBxebkA14-9eljUz_8lzE2vTzwXcuqLFQptpkBPj4psYNldkZgI0O7N8kUENLHwW4FtErXXIICMqxagbwQ3a45vdbQkqDW4xkb__SS7Qxs8.Tm5YR3pDa1SUQ4EViuji1iGcPxXp9W00JivE5txi7Ag&dib_tag=se&keywords=lenovo+ideapad+slim+3+under+50k&qid=1780065328&sprefix=lenovo+ideapad+slim+3+under+50k%2Caps%2C286&sr=8-2-spons&aref=aK9uh0Nve5&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1" },
+                { name: "ASUS Vivobook 15", price: "₹48,599", isRecommended: true, link: "https://www.amazon.in/ASUS-Vivobook-i3-1315U-Windows-X1504VA-D5321WS/dp/B0G92LZJD3/ref=sr_1_5?crid=3QR12GD34385A&dib=eyJ2IjoiMSJ9.QwBMJeeEDgCCgEjbA4lh4x-O-iFWghBMZWLqbNwlcnD-Eh1XG1rI4fdu3UKVtKgDo0AUjQifN7VoKNLKp_PNWsC54hITA4gnA3Pia59Ze5jZP34frS5aWNIpHYV2UPf_4JPxyuu-S-_zkCEsySvaNUr9WeHiMUd1lOHNmaTSEfG2sNV3flMtuqFktngWWfpAPjKQpzIMFtWwsG9xGlVacDK6x9HRC3H-VMp7oqZpIVQ.kj-7pgxADYt9--6TWyw8VmdKgFgFwH9MwTnUwIL0PaE&dib_tag=se&keywords=laptops+under+50000&qid=1780065615&sprefix=laptops+under+50000%2Caps%2C296&sr=8-5" },
+                { name: "Acer Aspire Lite", price: "₹47,990", isRecommended: false, link: "https://www.amazon.in/acer-Aspire-Processor-Windows-AL15-41/dp/B0F8RCM49Y/ref=sr_1_3?crid=1KO0UTSOWJZJC&dib=eyJ2IjoiMSJ9.-4V-dW0BHaktxFleEalUQDpogMBgHjF5IQ1KZZZ-utXp0UF_2vlDwX0EtqX5Y9pA8j3169-dHZfa-8y_1EYBZQ5tOCs38mriExjRiHg10xaOKBs02NRBI1ERCJ9r61FyLC7uhaCf6aTiEF5zUM-_wMQBYOlx9me-aZn0sRDD7_SzP409_q6_9hB-L0_txcJX7npqCp-OMAThWhCKg9U02hi5c93GS-GdKIf4j36CicI.DywwaLfyYOUAF2fp4QGe4nGbPWT4lgBp2Jx73H8c9xk&dib_tag=se&keywords=acer%2Baspire%2Blite%2Bunder%2B50000&qid=1780065517&sprefix=acer%2Baspire%2Blite%2Bunder%2B50000%2Caps%2C294&sr=8-3&th=1" },
+                { name: "HP 15 255R G10", price: "₹46,566" , isRecommended: false, link: "https://www.amazon.in/HP-G10-Threads-Graphics-Display/dp/B0G7YY5JV5/ref=sr_1_4?crid=3QR12GD34385A&dib=eyJ2IjoiMSJ9.QwBMJeeEDgCCgEjbA4lh4x-O-iFWghBMZWLqbNwlcnD-Eh1XG1rI4fdu3UKVtKgDo0AUjQifN7VoKNLKp_PNWsC54hITA4gnA3Pia59Ze5jZP34frS5aWNIpHYV2UPf_4JPxyuu-S-_zkCEsySvaNUr9WeHiMUd1lOHNmaTSEfG2sNV3flMtuqFktngWWfpAPjKQpzIMFtWwsG9xGlVacDK6x9HRC3H-VMp7oqZpIVQ.kj-7pgxADYt9--6TWyw8VmdKgFgFwH9MwTnUwIL0PaE&dib_tag=se&keywords=laptops+under+50000&qid=1780065615&sprefix=laptops+under+50000%2Caps%2C296&sr=8-4"}
+            ] 
+        },
+        mid: { 
+            specs: "Intel Core i7 / Ryzen 7, 16GB RAM, 512GB-1TB SSD. (Great for Docker, heavy IDEs, Android Studio).", 
+            laptops: [ 
+                { name: "Acer Swift Go 14 AI PC", price: "₹79,990", isRecommended: false, link: "https://www.amazon.in/Acer-Qualcomm-SnapdragonX-X1P-42-100-14-5-inch/dp/B0BJDJY8LY/ref=sr_1_6?crid=3R9NGVHEJG6H4&dib=eyJ2IjoiMSJ9.1cZ2-mhR-zKmBfn4nlvc-vTsGhaq8zCfeLFiE2XQW6-YJWOXZtuvCM4N_6zgsu2TwLWvCvnsM3WGZ6Xyyn_wuVAOtMJfSeeXMs5bIW59YZpMbFSb6KItgIoF4-H7LfcyHUkYbK4Z_RYuQrg2bhEWaY7LtGgWNbVZoQp-PtlGSpz4dwiyL2MPmZLr3WHFGh2erBpGFOpbRaGVgsVirW3hCLcK5cCcyb4Hpa1YI-Ku7NI.iy_HWIxi8OM52SGDJm0KnQohlwNGpMwiUU2oJec1pgQ&dib_tag=se&keywords=acer+swift+go+14&qid=1780066371&sprefix=acer+swift%2Caps%2C301&sr=8-6" },
+                { name: "Lenovo LOQ", price: "₹70,990", isRecommended: true, link: "https://www.amazon.in/Lenovo-7235HS-Refresh-Windows-83JC00JXIN/dp/B0GCZW2CKC/ref=sr_1_4?crid=2OL9XS46ZX2V6&dib=eyJ2IjoiMSJ9.bNMN0lBltKc7GNL_7HO5qQ21TMwlPOcXDkIXehuIO-BsVbS5z9XRSWqyyJjAZyaMLghSvXjFZe3vfBDP6VUJ5jBwnjEk3I6YMs9EpHKDLtt9eJYekAZfZ7hTC9SbdSCDSzzUSft_UymkwFKZXUvhmj8r7oNODYg08Jm2IwAmWqFLGNkI33CyeHWK4ctx8hgUR-L-_dl21re-kWbWmjvnEEQUOOyUNEdU1AbNDnQB2rk.27S5nVGetZtmCS72qMfPLNtJrTci8V0s0EcGka-zvi4&dib_tag=se&keywords=laptops%2Bunder%2B80000&qid=1780066542&sprefix=laptops%2Bunder%2B80000%2Caps%2C291&sr=8-4&th=1" },
+                { name: "ASUS Vivobook 16", price: "₹62,990", isRecommended: false, link: "https://www.amazon.in/ASUS-Vivobook-i5-13420H-Keyboard-X1605VA-SH1952WS/dp/B0FN9WN6XD/ref=sr_1_13?crid=2OL9XS46ZX2V6&dib=eyJ2IjoiMSJ9.bNMN0lBltKc7GNL_7HO5qQ21TMwlPOcXDkIXehuIO-BsVbS5z9XRSWqyyJjAZyaMLghSvXjFZe3vfBDP6VUJ5jBwnjEk3I6YMs9EpHKDLtt9eJYekAZfZ7hTC9SbdSCDSzzUSft_UymkwFKZXUvhmj8r7oNODYg08Jm2IwAmWqFLGNkI33CyeHWK4ctx8hgUR-L-_dl21re-kWbWmjvnEEQUOOyUNEdU1AbNDnQB2rk.27S5nVGetZtmCS72qMfPLNtJrTci8V0s0EcGka-zvi4&dib_tag=se&keywords=laptops%2Bunder%2B80000&qid=1780066542&sprefix=laptops%2Bunder%2B80000%2Caps%2C291&sr=8-13&th=1" },
+                { name: "Lenovo Ideapad Slim 3 13th Gen", price: "₹65,700", isRecommended: false, link: "https://www.amazon.in/Lenovo-IdeaPad-i5-13420H-Keyboard-83K100S3IN/dp/B0GDQFZBQC/ref=sr_1_17?crid=2OL9XS46ZX2V6&dib=eyJ2IjoiMSJ9.bNMN0lBltKc7GNL_7HO5qQ21TMwlPOcXDkIXehuIO-BsVbS5z9XRSWqyyJjAZyaMLghSvXjFZe3vfBDP6VUJ5jBwnjEk3I6YMs9EpHKDLtt9eJYekAZfZ7hTC9SbdSCDSzzUSft_UymkwFKZXUvhmj8r7oNODYg08Jm2IwAmWqFLGNkI33CyeHWK4ctx8hgUR-L-_dl21re-kWbWmjvnEEQUOOyUNEdU1AbNDnQB2rk.27S5nVGetZtmCS72qMfPLNtJrTci8V0s0EcGka-zvi4&dib_tag=se&keywords=laptops+under+80000&qid=1780066542&sprefix=laptops+under+80000%2Caps%2C291&sr=8-17" }
+            ] 
+        },
+        premium: { 
+            specs: "Apple M3 or Intel Core Ultra 7, 16GB+ RAM. (Unix-based systems are industry standard for devs).", 
+            laptops: [ 
+                { name: "Apple MacBook Air 13 (16GB)", price: "₹1,12,700", isRecommended: false, link: "https://www.amazon.in/Apple-2026-MacBook-Laptop-chip/dp/B0GR1HPR1W/ref=sr_1_1?crid=3EGRHD2M91CIX&dib=eyJ2IjoiMSJ9.cVZmuypfCHaeYDIrkQeofHFIVMNwdmC6f14CmzwNaaTmRkLhINP4vm3W3pijPuPl7FGDnV1Jg2j-MEZSkHkoar3CWRafmRQy7gmPomwKTsMsMVRGS7MP-Mofb8KVmM4xCk0xfFJjRL8MBIHgYxUx14jgPyqdqo5857LeDwjiTZvABAyYeV2CAAW7MIJVbtO98vVShN4sOatRILPrIhxKtWrdhaDSQEJSiu5LU8sxPbU.Yud-BiJnOIe7-thL3gVK83F6hbIEVXONPTT1THRnyc8&dib_tag=se&keywords=macbook+air+m3&qid=1780067097&sprefix=macbook+air+m3%2Caps%2C325&sr=8-1" },
+                { name: "Asus ZenBook 14", price: "₹1,08,000", isRecommended: false, link: "https://www.amazon.in/ASUS-Zenbook-screen-Windows-UX3405CA-PZ162WS/dp/B0DSHTHR67/ref=sr_1_5?crid=1MTJDV5BNYKV0&dib=eyJ2IjoiMSJ9.g1cgzj5OG3R9gzpamjoXpBnku5P0t6Ta8yqLHMr50NQpPXJGCWrink8NDBN1rd4pME9mK0OJVM7tDVN4A_CdoaBopBBglqzW_uPRHbQqLItR-tZ6tAcA9_ldHbI--uwF7jhQrEiF8hF5i5meDQBHqSB_UuzvlMSqyPsIAeBlZKtxQUUqyiSTH1SmPG9_Sjhi6YGhU3sGqzQ9MWIpoK9OhsKpgvyB-6goajxqNBf4ogs.LuK_4Ic7KE3oPRwSobzz5oSKXFCNvDj4qswQ4axwu2I&dib_tag=se&keywords=dell%2Bxps&qid=1780067362&sprefix=dell%2Bxps%2B%2Caps%2C320&sr=8-5&th=1" },
+                { name: "Apple MacBook Pro", price: "₹2,02,900", isRecommended: true, link: "https://www.amazon.in/Apple-2025-MacBook-Laptop-10%E2%80%91core/dp/B0FWD8F8TN/ref=sr_1_1_sspa?crid=2VCGY8VM54EYP&dib=eyJ2IjoiMSJ9.cVZmuypfCHaeYDIrkQeofOHxDEIIHd9brI53mIM0f-KIar64eTtVoSxkGmhlRnvmjwozJ6ZcuRXQney33jQnjC8ShBexWm6mgSj4NKIx-WcT4m9K7ulykFvBn8iEvO8h9_DgY2-fOJE-QskmGKM9_WzVxD01KQQBnLrEPHOZXn6Gr_fxP5_48GVyas8LZwLNT7HKlF-2Bkl7AsQYmK0lNRB7jXd-90pzpGXXBCFzPfM.KOfeoBlywrPKas7TmR1oDLuKMUn6UfKNPq-FB761zDw&dib_tag=se&keywords=macbook+pro&qid=1780067221&sprefix=macbook+pro+%2Caps%2C313&sr=8-1-spons&aref=vh7ysXj9gb&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1" },
+                { name: "HP Victus", price: "₹1,24,300", isRecommended: false, link: "https://www.amazon.in/HP-Upgradeable-Office24-fa2409TX-Backlit/dp/B0G1YPZS51/ref=sr_1_9?crid=1P2OP77E0AADJ&dib=eyJ2IjoiMSJ9.UODVOxm-tIIlEGF1yCxDM_OgcwRtDiAdgl2sTHHsRztytkX-ml_OpL3uxvIxuo04h79aj23LYV2G8rF-k6ghR_3QJYtlqIJ4sWy_h0yGl-y6EjShNwOsYLlwsuuep66zqOcDZ-IhIzziPmXOd_owDXLyxbnCnKV2LGdSZGjPe3C7atq3B2CTHm9gRuJQ_ZwXhPYy_5_t2DnfuOq0DJgpY0J-OCgSST_OSokS1EUnhys.IKkXpe2EIFpNqP2kqlY2TGU8nVp_7JxrjpCx03WvgxA&dib_tag=se&keywords=laptops%2Bover%2B1%2Blakh&qid=1780066937&sprefix=laptops%2Bover%2B1%2Blakh%2Caps%2C294&sr=8-9&th=1" }
+            ] 
+        }
     },
-    engineering: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } },
-    creative: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } },
-    general: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } }
+    
+    // --- ENGINEERING & ARCHITECTURE (Needs dedicated GPU for AutoCAD, SolidWorks, 3D rendering) ---
+    engineering: {
+        budget: { 
+            specs: "Intel i5 (H-Series), 16GB RAM, Dedicated GPU (Nvidia RTX 3050 minimum).", 
+            laptops: [
+                { name: "Lenovo IdeaPad Gaming 3", price: "₹49,990", isRecommended: true, link: "#" },
+                { name: "Acer Aspire 5 Gaming", price: "₹54,990", isRecommended: false, link: "#" },
+                { name: "HP Victus (Ryzen 5)", price: "₹52,990", isRecommended: false, link: "#" }
+            ] 
+        },
+        mid: { 
+            specs: "Intel i7 / Ryzen 7 (H-Series), 16GB RAM, RTX 4050 / 4060 GPU.", 
+            laptops: [
+                { name: "ASUS TUF Gaming A15", price: "₹74,990", isRecommended: true, link: "#" },
+                { name: "Lenovo LOQ 15", price: "₹78,990", isRecommended: true, link: "#" },
+                { name: "Acer Nitro V", price: "₹76,990", isRecommended: false, link: "#" }
+            ] 
+        },
+        premium: { 
+            specs: "Intel i9 / Ryzen 9, 32GB RAM, RTX 4060 or higher. Extreme cooling thermals.", 
+            laptops: [
+                { name: "ASUS ROG Zephyrus G14", price: "₹1,55,000", isRecommended: true, link: "#" },
+                { name: "Lenovo Legion Pro 5i", price: "₹1,45,000", isRecommended: false, link: "#" },
+                { name: "Alienware m16 R2", price: "₹1,85,000", isRecommended: false, link: "#" }
+            ] 
+        }
+    },
+
+    // --- CREATIVE MEDIA & DESIGN (Needs color-accurate 100% sRGB/DCI-P3 displays, good GPU for video editing) ---
+    creative: {
+        budget: { 
+            specs: "OLED Display (crucial for color accuracy), Core i5 / Ryzen 5, 16GB RAM.", 
+            laptops: [
+                { name: "ASUS Vivobook Go 15 OLED", price: "₹48,990", isRecommended: true, link: "#" },
+                { name: "MSI Modern 14", price: "₹42,000", isRecommended: false, link: "#" },
+                { name: "Lenovo IdeaPad Slim 3 (IPS)", price: "₹45,990", isRecommended: false, link: "#" }
+            ] 
+        },
+        mid: { 
+            specs: "Apple M-series or Intel Evo. Minimum 100% sRGB screen, good battery for field shoots.", 
+            laptops: [
+                { name: "Apple MacBook Air M1", price: "₹74,900", isRecommended: true, link: "#" },
+                { name: "ASUS Creator Series Vivobook 16X", price: "₹79,990", isRecommended: false, link: "#" },
+                { name: "Lenovo Yoga Slim 6i", price: "₹76,990", isRecommended: false, link: "#" }
+            ] 
+        },
+        premium: { 
+            specs: "Apple M3 Pro / Max, or RTX 4070 Studio Laptops. Mini-LED or high-res OLED displays.", 
+            laptops: [
+                { name: "Apple MacBook Pro 14 (M3 Pro)", price: "₹1,99,900", isRecommended: true, link: "#" },
+                { name: "ASUS Zenbook Pro 14 OLED", price: "₹1,44,990", isRecommended: false, link: "#" },
+                { name: "Dell XPS 15", price: "₹1,85,000", isRecommended: false, link: "#" }
+            ] 
+        }
+    },
+
+    // --- GENERAL STUDIES & HUMANITIES (Needs light weight, extreme battery life, comfortable keyboard) ---
+    general: {
+        budget: { 
+            specs: "Intel i3 / Ryzen 3, 8GB RAM, 512GB SSD. Lightweight build.", 
+            laptops: [
+                { name: "Honor MagicBook X14", price: "₹36,990", isRecommended: true, link: "#" },
+                { name: "HP 15s", price: "₹38,990", isRecommended: false, link: "#" },
+                { name: "Xiaomi NoteBook Pro 120", price: "₹41,990", isRecommended: false, link: "#" }
+            ] 
+        },
+        mid: { 
+            specs: "Intel Evo certification for battery, i5 / Ryzen 5, premium metal chassis.", 
+            laptops: [
+                { name: "Samsung Galaxy Book3", price: "₹68,990", isRecommended: true, link: "#" },
+                { name: "Lenovo ThinkBook 15", price: "₹58,990", isRecommended: false, link: "#" },
+                { name: "Acer Swift 3", price: "₹62,000", isRecommended: false, link: "#" }
+            ] 
+        },
+        premium: { 
+            specs: "Ultra-thin ultrabooks. Sub-1.2kg weight, all-day battery life.", 
+            laptops: [
+                { name: "LG Gram 14 (1kg weight)", price: "₹95,000", isRecommended: true, link: "#" },
+                { name: "Microsoft Surface Laptop 5", price: "₹1,05,000", isRecommended: false, link: "#" },
+                { name: "Apple MacBook Air M2", price: "₹99,900", isRecommended: true, link: "#" }
+            ] 
+        }
+    }
 };
 
 let currentMatch = null;
