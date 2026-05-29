@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Laphunt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* --- Google Material Design 3 Variables --- */
+        :root {
+            --md-bg: #f8f9fa; --md-surface: #ffffff; --md-on-surface: #202124; --md-on-surface-variant: #5f6368;
+            --md-primary: #0b57d0; --md-primary-hover: #0842a0; --md-outline: #dadce0;
+            --md-shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --md-shadow-2: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            --sidebar-overlay: rgba(32,33,36,0.6); --badge-bg: #e8f0fe; --badge-text: #1967d2;
+        }
+
+        .dark-mode {
+            --md-bg: #121212; --md-surface: #1e1e1e; --md-on-surface: #e8eaed; --md-on-surface-variant: #9aa0a6;
+            --md-primary: #8ab4f8; --md-primary-hover: #aecbfa; --md-outline: #3c4043;
+            --md-shadow-1: 0 1px 2px 0 rgba(0,0,0,0.5), 0 1px 3px 1px rgba(0,0,0,0.3);
+            --md-shadow-2: 0 1px 3px 0 rgba(0,0,0,0.5), 0 4px 8px 3px rgba(0,0,0,0.3);
+            --sidebar-overlay: rgba(0,0,0,0.8); --badge-bg: #3c4043; --badge-text: #8ab4f8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
+        .app-container {
+            width: 100%; max-width: 430px; height: 100%; max-height: 900px;
+            background-color: var(--md-bg); color: var(--md-on-surface);
+            position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: background-color 0.3s, color 0.3s;
+        }
+
+        @keyframes slideFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-slide-up { animation: slideFadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        #splash-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--md-surface);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #splash-screen h1 { color: var(--md-primary); font-size: 2.5rem; letter-spacing: -1px; }
+        .spinner { margin-top: 24px; width: 36px; height: 36px; border: 4px solid var(--md-outline); border-top: 4px solid var(--md-primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .screen { display: none; height: 100%; flex-direction: column; background-color: var(--md-bg); }
+        .screen.active { display: flex; animation: slideFadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        #auth-screen { padding: 40px 24px; justify-content: center; }
+
+        .input-field {
+            width: 100%; padding: 16px; margin: 8px 0 16px 0; border: 1px solid var(--md-outline); border-radius: 8px;
+            background: var(--md-surface); color: var(--md-on-surface); font-size: 16px; outline: none; transition: border 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus { border-color: var(--md-primary); box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.2); }
+
+        .btn {
+            width: 100%; padding: 16px; background-color: var(--md-primary); color: #fff; border: none; border-radius: 24px;
+            font-size: 16px; font-weight: 500; cursor: pointer; box-shadow: var(--md-shadow-1); transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); box-shadow: none; }
+        .dark-mode .btn { color: #000; }
+
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background-color: var(--md-surface); box-shadow: var(--md-shadow-1); z-index: 10; }
+        .header-left { display: flex; align-items: center; }
+        
+        .menu-btn { background: none; border: none; cursor: pointer; width: 24px; height: 18px; position: relative; margin-right: 16px; }
+        .menu-btn div { width: 100%; height: 2px; background-color: var(--md-on-surface); position: absolute; left: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .menu-btn div:nth-child(1) { top: 0; } .menu-btn div:nth-child(2) { top: 8px; } .menu-btn div:nth-child(3) { top: 16px; }
+        .menu-btn.open div:nth-child(1) { transform: rotate(45deg); top: 8px; } .menu-btn.open div:nth-child(2) { opacity: 0; transform: translateX(-10px); } .menu-btn.open div:nth-child(3) { transform: rotate(-45deg); top: 8px; }
+        .header h2 { font-size: 1.2rem; font-weight: 500; color: var(--md-on-surface); }
+        
+        .avatar { border-radius: 50%; background-color: var(--badge-bg); border: 1px solid var(--md-outline); object-fit: cover; }
+        .avatar-small { width: 36px; height: 36px; } .avatar-large { width: 100px; height: 100px; margin: 0 auto 16px auto; display: block; }
+        .content { padding: 24px; flex: 1; overflow-y: auto; }
+
+        #sidebar {
+            position: absolute; top: 0; left: -300px; width: 280px; height: 100%; background-color: var(--md-surface); z-index: 30;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; border-radius: 0 16px 16px 0; box-shadow: var(--md-shadow-2);
+        }
+        .sidebar-header { padding: 32px 24px; border-bottom: 1px solid var(--md-outline); }
+        .sidebar-menu { list-style: none; padding: 12px 0; }
+        .sidebar-menu li { padding: 14px 24px; font-size: 1rem; font-weight: 500; color: var(--md-on-surface); cursor: pointer; transition: background 0.2s; }
+        .sidebar-menu li:hover { background-color: var(--badge-bg); color: var(--badge-text); }
+        
+        .theme-toggle-container { margin-top: auto; padding: 24px; border-top: 1px solid var(--md-outline); display: flex; justify-content: space-between; align-items: center; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-outline); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--md-primary); } input:checked + .slider:before { transform: translateX(20px); }
+
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--sidebar-overlay); z-index: 20; display: none; opacity: 0; transition: opacity 0.3s ease; }
+
+        .material-card { background: var(--md-surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--md-shadow-1); border: 1px solid var(--md-outline); }
+        .laptop-item { background: var(--md-bg); border-radius: 12px; padding: 16px; margin-top: 12px; position: relative; }
+        .badge-recommended { position: absolute; top: -10px; right: 12px; background: var(--badge-bg); color: var(--badge-text); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--md-primary); }
+        .buy-link { display: block; text-align: center; background: var(--md-surface); color: var(--md-primary); border: 1px solid var(--md-outline); padding: 12px; border-radius: 24px; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-top: 12px; transition: background 0.2s; }
+        .buy-link:active { background: var(--badge-bg); }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="app">
+    
+    <div id="splash-screen">
+        <h1>Laphunt</h1>
+        <p style="color: var(--md-on-surface-variant); margin-top: 8px;">Connecting to Cloud...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <div id="auth-screen" class="screen">
+        <h2 style="color: var(--md-on-surface); margin-bottom: 8px; text-align: center; font-size: 1.8rem;">Create Account</h2>
+        <p style="text-align: center; color: var(--md-on-surface-variant); margin-bottom: 32px;">Save your hardware matches.</p>
+        
+        <label style="font-size: 0.85rem; font-weight: 500; color: var(--md-on-surface-variant);">Full Name</label>
+        <input type="text" id="username" class="input-field" placeholder="e.g. John Doe">
+        
+        <label style="font-size: 0.85rem; font-weight: 500; color: var(--md-on-surface-variant);">Email Address</label>
+        <input type="email" id="email" class="input-field" placeholder="name@college.edu">
+        
+        <label style="font-size: 0.85rem; font-weight: 500; color: var(--md-on-surface-variant);">Password</label>
+        <input type="password" id="password" class="input-field" placeholder="••••••••">
+        
+        <button class="btn" onclick="signIn()" style="margin-top: 16px;">Sign In / Sign Up</button>
+    </div>
+
+    <div id="main-screen" class="screen">
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></button>
+                <h2>Laphunt</h2>
+            </div>
+            <img id="top-avatar-main" src="" alt="Avatar" class="avatar avatar-small">
+        </div>
+        
+        <div class="content">
+            <h3 style="font-size: 1.4rem; font-weight: 500;">Welcome, <span id="user-display">Student</span></h3>
+            <p style="color: var(--md-on-surface-variant); margin-top: 4px; font-size: 0.95rem;">Select your parameters to hunt.</p>
+            
+            <div class="material-card anim-slide-up" style="margin-top: 24px; animation-delay: 0.1s;">
+                <label style="display: block; margin-bottom: 8px; color: var(--md-on-surface); font-weight: 500;">Major/Subject</label>
+                <select id="subject-select" class="input-field">
+                    <option value="cs">Computer Science & IT</option>
+                    <option value="engineering">Engineering & Architecture</option>
+                    <option value="creative">Creative Media & Design</option>
+                    <option value="general">General Studies & Humanities</option>
+                </select>
+
+                <label style="display: block; margin-bottom: 8px; color: var(--md-on-surface); font-weight: 500;">Budget Tier</label>
+                <select id="budget-select" class="input-field">
+                    <option value="budget">Budget (Under ₹50,000)</option>
+                    <option value="mid">Mid-Range (₹50,000 - ₹80,000)</option>
+                    <option value="premium">Premium (Above ₹80,000)</option>
+                </select>
+
+                <button onclick="generateMatch()" class="btn">Hunt for Laptop</button>
+            </div>
+
+            <div id="results-container" style="display: none; padding-bottom: 20px;"></div>
+        </div>
+    </div>
+
+    <div id="history-screen" class="screen">
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></button>
+                <h2>Your Cloud History</h2>
+            </div>
+            <img id="top-avatar-history" src="" alt="Avatar" class="avatar avatar-small">
+        </div>
+        <div class="content" id="history-content"></div>
+    </div>
+
+    <div id="profile-screen" class="screen">
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></button>
+                <h2>Profile Settings</h2>
+            </div>
+        </div>
+        <div class="content">
+            <div class="material-card" style="text-align: center; margin-top: 16px;">
+                <img id="profile-avatar-large" src="" alt="Avatar" class="avatar avatar-large">
+                <h3 id="profile-display-name" style="font-size: 1.4rem;">Student Name</h3>
+                <p style="color: var(--md-on-surface-variant); font-size: 0.9rem; margin-bottom: 24px;">Your data is safely backed up to Google Cloud.</p>
+                <p style="text-align:left; color:var(--md-on-surface-variant); font-size: 0.85rem; margin-bottom:16px;">Email: <strong id="profile-email-display">email@college.edu</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="about-screen" class="screen">
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></button>
+                <h2>About</h2>
+            </div>
+        </div>
+        <div class="content" style="text-align: center; margin-top: 40px;">
+            <div class="material-card">
+                <h2 style="color: var(--md-primary);">Laphunt</h2>
+                <p style="color: var(--md-on-surface-variant); margin-top: 10px;">Version 3.0 (Cloud Connected)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" onclick="toggleMenu()"></div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3 id="sidebar-name" style="font-size: 1.2rem; font-weight: 500;">Menu</h3>
+            <p style="font-size: 0.85rem; color: var(--md-on-surface-variant); margin-top: 4px;" id="sidebar-email">student@college.edu</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li onclick="showScreen('main-screen')">Hunt Laptops</li>
+            <li onclick="showScreen('history-screen')">Bookmarks History</li>
+            <li onclick="showScreen('profile-screen')">Profile Settings</li>
+            <li onclick="showScreen('about-screen')">About App</li>
+            <li onclick="signOut()" style="color: #d93025; border-top: 1px solid var(--md-outline); margin-top: 8px;">Sign Out</li>
+        </ul>
+        <div class="theme-toggle-container">
+            <span style="font-weight: 500; font-size: 0.95rem;">Dark Mode</span>
+            <label class="switch"><input type="checkbox" id="theme-toggle" onchange="toggleTheme()"><span class="slider"></span></label>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ==========================================
+// 2. PASTE YOUR FIREBASE CONFIG HERE
+// ==========================================
+const firebaseConfig = {
+   apiKey: "AIzaSyD_IdzSvbKun9i8wJ_YiU8sQWADSTl8Frk",
+  authDomain: "lap-hunt.firebaseapp.com",
+  projectId: "lap-hunt",
+  storageBucket: "lap-hunt.firebasestorage.app",
+  messagingSenderId: "914691334167",
+  appId: "1:914691334167:web:15dcf7a950d1f35657bc52",
+  measurementId: "G-X2BW8H12VL"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// --- Initialization ---
+const splashScreen = document.getElementById('splash-screen');
+const appContainer = document.getElementById('app');
+const themeToggle = document.getElementById('theme-toggle');
+let menuOpen = false;
+
+window.onload = () => {
+    if (localStorage.getItem('theme') === 'dark') { appContainer.classList.add('dark-mode'); themeToggle.checked = true; }
+    
+    // Firebase actively checks if you are logged in
+    auth.onAuthStateChanged((user) => {
+        setTimeout(() => {
+            splashScreen.style.transform = 'scale(1.05)';
+            splashScreen.style.opacity = '0';
+            setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
+        }, 800);
+
+        if (user) {
+            // Load user data from Firestore
+            db.collection('users').doc(user.uid).get().then((doc) => {
+                const name = doc.exists && doc.data().name ? doc.data().name : "Student";
+                updateUIForUser(user.email, name);
+                showScreen('main-screen');
+            });
+        } else {
+            showScreen('auth-screen');
+        }
+    });
+};
+
+function generateAvatarUrl(name) { return `https://robohash.org/${encodeURIComponent(name.trim().toLowerCase())}.png?set=set4&bgset=bg1&size=200x200`; }
+
+function updateUIForUser(email, name) {
+    document.getElementById('user-display').innerText = name;
+    document.getElementById('sidebar-name').innerText = name;
+    document.getElementById('sidebar-email').innerText = email;
+    document.getElementById('profile-display-name').innerText = name;
+    document.getElementById('profile-email-display').innerText = email;
+    
+    const avatarUrl = generateAvatarUrl(name);
+    document.getElementById('top-avatar-main').src = avatarUrl;
+    document.getElementById('top-avatar-history').src = avatarUrl;
+    document.getElementById('profile-avatar-large').src = avatarUrl;
+}
+
+// --- Cloud Authentication Logic ---
+function signIn() {
+    const name = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) { alert("Email and Password are required."); return; }
+    document.querySelector('#auth-screen .btn').innerText = "Connecting...";
+
+    // Try to login first
+    auth.signInWithEmailAndPassword(email, password)
+        .catch((error) => {
+            // If account doesn't exist, try to create it
+            return auth.createUserWithEmailAndPassword(email, password).then((userCred) => {
+                // Save their name to the database on creation
+                return db.collection('users').doc(userCred.user.uid).set({ name: name || 'Student', history: [] });
+            });
+        })
+        .then(() => {
+            document.querySelector('#auth-screen .btn').innerText = "Sign In / Sign Up";
+        })
+        .catch((error) => {
+            document.querySelector('#auth-screen .btn').innerText = "Sign In / Sign Up";
+            alert("Error: " + error.message);
+        });
+}
+
+function signOut() { 
+    auth.signOut().then(() => { if(menuOpen) toggleMenu(); }); 
+}
+
+// --- Navigation ---
+function toggleMenu() {
+    menuOpen = !menuOpen;
+    const btns = document.querySelectorAll('.menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    if (menuOpen) {
+        sidebar.style.left = '0'; overlay.style.display = 'block'; setTimeout(() => overlay.style.opacity = '1', 10);
+        btns.forEach(btn => btn.classList.add('open'));
+    } else {
+        sidebar.style.left = '-300px'; overlay.style.opacity = '0'; setTimeout(() => overlay.style.display = 'none', 300);
+        btns.forEach(btn => btn.classList.remove('open'));
+    }
+}
+
+function showScreen(targetScreenId) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    if(targetScreenId === 'history-screen') renderHistory();
+    document.getElementById(targetScreenId).classList.add('active');
+    if (menuOpen) toggleMenu();
+}
+
+function toggleTheme() {
+    if (themeToggle.checked) { appContainer.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); } 
+    else { appContainer.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); }
+}
+
+
+// ==========================================
+// YOUR HARDWARE DATABASE
+// ==========================================
+const laptopData = {
+    cs: {
+        budget: { specs: "Your specs here", laptops: [ { name: "Example Laptop 1", price: "₹45,000", isRecommended: true, link: "#" } ] },
+        mid: { specs: "Your specs here", laptops: [ { name: "Example Laptop 2", price: "₹65,000", isRecommended: false, link: "#" } ] },
+        premium: { specs: "Your specs here", laptops: [ { name: "Example Laptop 3", price: "₹95,000", isRecommended: true, link: "#" } ] }
+    },
+    engineering: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } },
+    creative: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } },
+    general: { budget: { specs: "", laptops: [] }, mid: { specs: "", laptops: [] }, premium: { specs: "", laptops: [] } }
+};
+
+let currentMatch = null;
+
+function generateMatch() {
+    const sSel = document.getElementById('subject-select');
+    const bSel = document.getElementById('budget-select');
+    
+    if(!laptopData[sSel.value] || !laptopData[sSel.value][bSel.value]) { alert("Database entry missing."); return; }
+    const result = laptopData[sSel.value][bSel.value];
+    
+    currentMatch = { subjectName: sSel.options[sSel.selectedIndex].text, budgetName: bSel.options[bSel.selectedIndex].text, specs: result.specs, laptops: result.laptops, date: new Date().toLocaleDateString() };
+
+    const container = document.getElementById('results-container');
+    container.style.display = 'block';
+    
+    let laptopsHtml = (result.laptops || []).map(laptop => `
+        <div class="laptop-item">
+            ${laptop.isRecommended ? '<span class="badge-recommended">★ Top Pick</span>' : ''}
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--md-on-surface); margin-top: 4px;">${laptop.name}</div>
+            <div style="color: var(--md-on-surface-variant); font-size: 0.9rem; margin-top: 4px;">Price: <strong style="color: var(--md-primary);">${laptop.price}</strong></div>
+            <a href="${laptop.link}" target="_blank" rel="noopener noreferrer" class="buy-link">Check Online</a>
+        </div>
+    `).join('');
+    
+    container.innerHTML = `
+        <div class="material-card anim-slide-up" style="margin-top: 16px;">
+            <h3 style="color: var(--md-primary); margin-bottom: 8px; font-weight: 500;">Required Specs</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 24px; color: var(--md-on-surface-variant);">${result.specs || 'N/A'}</p>
+            <h4 style="margin-bottom: 8px; border-bottom: 1px solid var(--md-outline); padding-bottom: 8px;">Recommended Hardware</h4>
+            ${laptopsHtml || '<p>No laptops available yet.</p>'}
+            <button onclick="saveToHistory()" style="margin-top: 24px; width: 100%; padding: 12px; background: transparent; color: var(--md-primary); border: 1px solid var(--md-outline); border-radius: 24px; font-weight: 500; cursor: pointer;">🔖 Bookmark to Cloud</button>
+        </div>
+    `;
+    setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+// --- Cloud History Logic ---
+function saveToHistory() {
+    if (!currentMatch) return;
+    const user = auth.currentUser;
+    if (user) {
+        db.collection('users').doc(user.uid).get().then(doc => {
+            let history = doc.exists && doc.data().history ? doc.data().history : [];
+            history.unshift(currentMatch);
+            return db.collection('users').doc(user.uid).update({ history: history });
+        }).then(() => alert('Match saved to your Cloud Bookmarks!'))
+          .catch(err => alert("Error saving: " + err.message));
+    }
+}
+
+function renderHistory() {
+    const container = document.getElementById('history-content');
+    const user = auth.currentUser;
+    if (!user) return;
+
+    db.collection('users').doc(user.uid).get().then(doc => {
+        let history = doc.exists && doc.data().history ? doc.data().history : [];
+
+        if (history.length === 0) {
+            container.innerHTML = `<div style="text-align: center; margin-top: 40px;"><p style="color: var(--md-on-surface-variant);">No bookmarks yet.</p><button onclick="showScreen('main-screen')" class="btn" style="margin-top: 24px; width: 60%;">Start Hunting</button></div>`;
+            return;
+        }
+
+        container.innerHTML = history.map((item, index) => `
+            <div class="material-card anim-slide-up" style="animation-delay: ${index * 0.05}s;">
+                <div style="font-size: 0.8rem; color: var(--md-on-surface-variant); margin-bottom: 8px;">Saved on ${item.date}</div>
+                <h3 style="color: var(--md-primary); font-size: 1.1rem;">${item.subjectName || ''}</h3>
+                <h4 style="font-weight: 500; font-size: 0.95rem; margin-bottom: 16px;">${item.budgetName || ''}</h4>
+                <p style="font-size: 0.85rem; color: var(--md-on-surface-variant); margin-bottom: 8px;"><strong>Specs:</strong> ${item.specs || ''}</p>
+                <ul style="font-size: 0.85rem; padding-left: 20px; line-height: 1.6;">${(item.laptops || []).map(lap => `<li>${lap.name} (${lap.price})</li>`).join('')}</ul>
+                <button onclick="deleteHistoryItem(${index})" style="margin-top: 16px; background: none; border: none; color: #d93025; font-weight: 500; cursor: pointer; font-size: 0.9rem;">🗑️ Remove</button>
+            </div>
+        `).join('');
+    });
+}
+
+function deleteHistoryItem(index) {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    db.collection('users').doc(user.uid).get().then(doc => {
+        if(doc.exists) {
+            let history = doc.data().history || [];
+            history.splice(index, 1);
+            return db.collection('users').doc(user.uid).update({ history: history });
+        }
+    }).then(() => renderHistory());
+}
+</script>
+</body>
+</html>
